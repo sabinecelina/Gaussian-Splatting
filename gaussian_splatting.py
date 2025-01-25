@@ -1,40 +1,30 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.spatial.transform import Rotation as R
-
-# # Points: [x, y, z], Colors: [r, g, b], Normals (optional)
-# def generate_sample_points():
-#     points = np.array([
-#         [1.0, 0.5, 0.2, 255, 0, 0],
-#         [0.5, 1.0, 0.8, 0, 255, 0],
-#         [0.8, 0.3, 1.0, 0, 0, 255],
-#         [1.2, 0.8, 0.4, 255, 255, 0],
-#         [0.4, 1.2, 0.6, 0, 255, 255],
-#     ])
-#     return points[:, :3], points[:, 3:]/255.0
-
-# points, colors = generate_sample_points()
 
 point = [1.0, 0.5, 0.2]
-color =  [255, 0, 0]
+color = [255, 0, 0]
 theta = np.radians(45)
-R = np.array([
+
+Rot = np.array([
     [np.cos(theta), -np.sin(theta), 0],
     [np.sin(theta),  np.cos(theta), 0],
     [0,              0,             1]
 ])
 S = np.diag([4, 1, 0.25])
 opacity = 0.4
-covariance_matrix = R @ S @ R.T
+covariance_matrix = Rot @ S @ Rot.T
+
 
 def get_camera_and_sample_image():
     v, i = 0, 0
     return v, i
 
+
 def gaussian(x, y, sigma):
-    xy = np.array([x,y])
+    xy = np.array([x, y])
     exponent = -0.5 * (xy.T @ np.linalg.inv(sigma) @ xy)
     return np.exp(exponent)
+
 
 def rasterize(w, h, M, S, C, A, V):
     """
@@ -48,7 +38,6 @@ def rasterize(w, h, M, S, C, A, V):
         C (np.ndarray): Array of colors (shape: [N, 3]).
         A (np.ndarray): Array of alpha values (shape: [N, 1]).
         V (np.ndarray): View transformation matrix (4x4).
-    
     Returns:
         np.ndarray: Rasterized image (shape: [h, w, 3]).
     """
@@ -138,8 +127,6 @@ V = np.eye(4)
 image = rasterize(w, h, M, S, C, A, V)
 
 # Visualize the output
-import matplotlib.pyplot as plt
 plt.imshow(image)
 plt.title("Rasterized Gaussian Splatting")
 plt.show()
-
